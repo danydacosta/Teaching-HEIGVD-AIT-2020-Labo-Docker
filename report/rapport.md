@@ -4,7 +4,12 @@
 
 ### Introduction
 
+Ce laboratoire a pour objectifs :
 
+- De créer notre propre images Docker
+- De se familiariser avec la supervision de processus légers pour Docker
+- De comprendre les concepts de base pour la mise à l'échelle dynamique d'une application en production
+- De mettre en pratique la gestion décentralisée des instances de serveur web
 
 ### Task 0: Identify issues and install the tools
 
@@ -58,7 +63,9 @@
 
 2. Describe your difficulties for this task and your understanding of what is happening during this task. Explain in your own words why are we installing a process supervisor. Do not hesitate to do more research and to find more articles on that topic to illustrate the problem.
 
-   > TODO Delphine
+   > Cette tâche ne nous a pas posé de difficultés, il faut juste être attentif à copier les configurations aux bons endroits dans les fichiers de configuration.
+   >
+   > Nous installons un process supervisor, mais ce n'est pas dans la philosophie Docker qui permet normalement d'avoir qu'un seul process par container, quand ce process meurt, le container meurt avec. Ce qui peut être contraignant dans certains cas. Nous mettons donc en place le système S6 afin de pouvoir exécuter plusieurs process dans un container.
 
 ### Task 2: Add a tool to manage membership in the web server cluster
 
