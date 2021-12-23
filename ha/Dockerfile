@@ -27,8 +27,8 @@ RUN mkdir /opt/bin \
 ENTRYPOINT ["/init"]
 
 # TODO: [Serf] Add Serf S6 setup
-#COPY services/serf /etc/services.d/serf
-#RUN chmod +x /etc/services.d/serf/run
+COPY services/serf /etc/services.d/serf
+RUN chmod +x /etc/services.d/serf/run
 
 # TODO: [Serf] Copy events handler scripts
 
