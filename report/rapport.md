@@ -55,8 +55,6 @@ Ce laboratoire a pour objectifs :
 
 ### Task 1: Add a process supervisor to run several processes
 
-**Deliverables**:
-
 1. Take a screenshot of the stats page of HAProxy at [http://192.168.42.42:1936](http://192.168.42.42:1936/). You should see your backend nodes. It should be really similar to the screenshot of the previous task.
 
    ![task0_1](./img/task1_1.png)
@@ -69,7 +67,19 @@ Ce laboratoire a pour objectifs :
 
 ### Task 2: Add a tool to manage membership in the web server cluster
 
+1. Provide the docker log output for each of the containers: `ha`, `s1` and `s2`. You need to create a folder `logs` in your repository to store the files separately from the lab report. For each lab task create a folder and name it using the task number. No need to create a folder when there are no logs.
 
+   > Les logs se trouve dans le dossier logs/task 2.
+
+2. Give the answer to the question about the existing problem with the current solution.
+
+   > Le problème avec la configuration actuelle c'est qu'il faut démarrer le container ha avant les containers s1 et s2 pour que ha les détectent comme il faut et les ajoute en tant que node. Si le container ha ne fonctionne pas ou plus alors cela peut être problématique car cela ne créera pas de cluster. Avec Serf il existe une solution qui permet que chaque nouveau node s'attache au dernier node créé. 
+
+3. Give an explanation on how `Serf` is working. Read the official website to get more details about the `GOSSIP` protocol used in `Serf`. Try to find other solutions that can be used to solve similar situations where we need some auto-discovery mechanism.
+
+   > Serf s'appuie sur le protocole GOSSIP qui est efficace et léger pour communiquer avec les nœuds. Les agents de Serf échangent périodiquement des messages entre eux, le premier nœud envoie un message à un autre nœud, ces deux nœuds envoient ensuite leurs messages à un autre nœud et ainsi de suite jusqu'à ce que tous les nœuds aient échangés leurs messages. Grace à ce protocole, Serf est capable de détecter rapidement les membres défaillants et d'en informer le reste du cluster, il s'appuie sur une technique de sondage aléatoire qui s'est avérée efficace pour les clusters de toute taille.
+   >
+   > Sur internet nous trouvons d'autres software comme ZooKeeper, qui est lui plus complexe que Serf, il ne peut être utilisé directement comme un outil mais il faudra utilisé des librairies pour implémenter les fonctionnalités. Un autre outil est Consul, qui utilise un serveur centralisé, contrairement à Serf. Consul s'inspire de la bibliothéque Serf pour la détection des membres et des échecs, mais fournit en plus des fonctionnalités de haut niveau.
 
 ### Task 3: React to membership changes
 
