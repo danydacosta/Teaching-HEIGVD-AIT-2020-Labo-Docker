@@ -27,7 +27,7 @@ RUN mkdir /opt/bin \
 # This will start S6 as our main process in our container
 ENTRYPOINT ["/init"]
 
-# TODO: [Serf] Add Serf S6 setup
+# [Serf] Add Serf S6 setup
 COPY services/serf /etc/services.d/serf
 RUN chmod +x /etc/services.d/serf/run
 
