@@ -83,7 +83,13 @@ Ce laboratoire a pour objectifs :
 
 ### Task 3: React to membership changes
 
+1. Provide the docker log output for each of the containers: `ha`, `s1` and `s2`. Put your logs in the `logs` directory you created in the previous task.
 
+   > Les logs se trouvent de le dossier logs/task 3.
+
+2. Provide the logs from the `ha` container gathered directly from the `/var/log/serf.log` file present in the container. Put the logs in the `logs` directory in your repo.
+
+   > Le log se trouve dans le fichier logs/task 3/serf.log
 
 ### Task 4: Use a template engine to easily generate configuration files
 
@@ -99,6 +105,6 @@ Ce laboratoire a pour objectifs :
 
 ### Difficulties
 
-
+Il faut faire attention au build des images docker de leur donner toujours les mêmes noms.
 
 ### Conclusion
