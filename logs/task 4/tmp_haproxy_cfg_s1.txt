@@ -1,0 +1,1 @@
+Container bbb2bc7f0b7f has joined the Serf cluster with the following IP address: 192.168.42.11

@@ -63,7 +63,7 @@ Ce laboratoire a pour objectifs :
 
    > Cette tâche ne nous a pas posé de difficultés, il faut juste être attentif à copier les configurations aux bons endroits dans les fichiers de configuration.
    >
-   > Nous installons un process supervisor, mais ce n'est pas dans la philosophie Docker qui permet normalement d'avoir qu'un seul process par container, quand ce process meurt, le container meurt avec. Ce qui peut être contraignant dans certains cas. Nous mettons donc en place le système S6 afin de pouvoir exécuter plusieurs process dans un container.
+   > Nous installons un process supervisor, mais ce n'est pas dans la philosophie Docker qui permet normalement d'avoir qu'un seul process par container, quand ce process meurt, le container meurt avec. Ce qui peut être contraignant dans certains cas. Nous mettons donc en place le système S6 afin de pouvoir exécuter plusieurs process dans un container. Cela nous permettera par exemple d'avoir un processus qui s'occupera de collecter les logs et de les envoyés vers un système centralisé.
 
 ### Task 2: Add a tool to manage membership in the web server cluster
 
@@ -93,7 +93,21 @@ Ce laboratoire a pour objectifs :
 
 ### Task 4: Use a template engine to easily generate configuration files
 
+1. Compare the two `RUN` options.
 
+   > Chaque `RUN` ajoute un layer (couche) à l'image. La taille totale de l'image dépend de la taille de chaque couche qui l'a compose. Dans un exemple où l'on téléchargerait un code source, l'extracterait, le compilairait dans un binaire et ensuite nous supprimerions le tgz et les fichiers sources, c'est mieux de faire cela dans un seul `RUN` pour réduire la taille de l'image. En utilisant plusieurs `RUN` distinct, on peut faire appel au cache si une image doit être reconsruite (build). On aurait donc de meilleures performances dans le build avec plusieurs `RUN` plutôt qu'avec un seul. L'usage dépend donc de l'utilisation que l'on veut en faire : par exemple si l'on télécharge des dépendances que l'on sait qu'elles seront mises à jour rarement, vaut mieux les mettre dans un seul `RUN`. Ensuite, les commandes rapides qui peuvent changer fréquemment seront mieux dans un `RUN` séparé, pour une reconstruction de l'image plus rapide.
+
+2. Propose a different approach to architecture our images to be able to reuse as much as possible what we have done. Your proposition should also try to avoid as much as possible repetitions between your images.
+
+   > On peut séparer les couches par leur potentiel de réusabilité et utilisation du cache. Par exemple, si l'on a 4 images, toutes avec la même image de base (p. ex debian), il serait intelligent de récupérer une collection d'utilitaire commune à la plupart de ces images dans la première commande `RUN` pour que les autres images en bénéficie par le biais du cache. L'ordre de ces commandes est aussi important, il vaut mieux placer les composants qui seront rarement mis à jour en haut dans le Dockerfile.
+
+3. Provide the logs
+
+   > Les logs se trouvent dans le fichier logs/task 4
+
+4. Based on the three output files you have collected, what can you say about the way we generate it? What is the problem if any?
+
+   > La commande handlebars prend en paramètre le nom (clé) des éléments qui seront remplacés dans le template de base, puis redirige la sortie de la commande dans un nouveau fichier, qui sera donc notre fichier généré. Avec la configuration actuelle, le seul ennui que l'on peut constater c'est que l'on peut pas avoir plusieurs clé avec le même nom, il faut donc réfléchir à une stratégie de nommage pour éviter les doublons, surtout dans des cas où l'on génèrerait des gros fichiers avec beaucoup de paramètre.
 
 ### Task 5: Generate a new load balancer configuration when membership changes
 
