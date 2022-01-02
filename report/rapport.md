@@ -111,7 +111,7 @@ Ce laboratoire a pour objectifs :
 
 ### Task 5: Generate a new load balancer configuration when membership changes
 
-
+   > Les logs se trouvent dans le fichier logs/task 5
 
 ### Task 6: Make the load balancer automatically reload the new configuration
 
