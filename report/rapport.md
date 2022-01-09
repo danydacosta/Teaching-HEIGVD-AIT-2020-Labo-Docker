@@ -15,19 +15,64 @@ Ce laboratoire a pour objectifs :
 
 1. **[M1]** Do you think we can use the current solution for a production environment? What are the main problems when deploying it in a production environment?
 
-   > 
+   > Il y a uniquement deux machines derrières le proxy pour répondre aux requêtes clients. Elles peuvent être surchargées. Elles peuvent aussi tomber en panne, aucune autre machine applicative n’est prête pour compenser une éventuelle panne et prendre le relai, du moins pas automatiquement. Si une machine applicative est « beuguée » pendant un certain temps, il faut tuer le container et le relancer automatiquement. Aussi, dès qu’un container est « beugué », il faut le considérer comme en panne est appliquer la logique proposée plus haut.
+
+Le proxy (HA) est critique, c’est le seul point d’entrée pour les clients. S’il tombe, plus aucune requête peut être traitée.
+Lorsque l’on ajoute une nouvelle webapp, il faut modifier le fichier docker-compose et le rebuild. Ceci veut dire que plus aucune requête pourra être traité le temps de faire cette modification.
+
 
 2. **[M2]** Describe what you need to do to add new `webapp` container to the infrastructure. Give the exact steps of what you have to do without modifiying the way the things are done. Hint: You probably have to modify some configuration and script files in a Docker image.
 
-   > 
+   > 1. Ajouter les informations du nouveau conteneur webapp dans les variables d’environnement « .env » :
+   > ```
+   > WEBAPP_X_NAME=sX
+   > WEBAPP_X_IP=192.168.42.XX
+   > ```
+   >
+   > 2. jouter dans le docker-compose.yml, dans la section services, les configurations du nouveau conteneur qui va contenir notre webapp sous le format suivant :
+   > ```
+   > webappX:
+   >     container_name: ${WEBAPP_X_NAME}
+   >     build:
+   >       context: ./webapp
+   >       dockerfile: Dockerfile
+   >     networks:
+   >       public_net:
+   >         ipv4_address: ${WEBAPP_X_IP}
+   >     ports:
+   >       - "4000:3000"
+   >     environment:
+   >          - TAG=${WEBAPP_X_NAME}
+   >          - SERVER_IP=${WEBAPP_X_IP}
+   >```
+   > Prendre soin d’ajuster le port pour qu’il ne soit pas en conflit avec un autre conteneur.
+   > 3.	Ajouter dans le docker-compose.yml, dans les variables d’environnement du container haproxy, une entrée pour le nouveau conteneur :
+   > ```
+   > environment:
+   >          - WEBAPP_X_IP=${WEBAPP_X_IP}
+   > ```
+   > 4.	Modifier la configuration de haproxy haproxy.cfg, afin d’ajouter notre webapp comme node dans le load balancing :
+   > ```
+   > cookie NODESESSID prefix nocache
+   >  # Define the list of nodes to be in the balancing
+   > mechanism
+   >  # http://cbonte.github.io/haproxy-dconv/2.2/configuration.html#4-server
+   >  server s1 ${WEBAPP_1_IP}:3000 check cookie s1
+   >  server s2 ${WEBAPP_2_IP}:3000 check cookie s2
+   >  server sX ${WEBAPP_X_IP}:3000 check cookie sX
+   > ```
+   > 5.	Arrêter et supprimer les conteneurs éventuellement en cours de fonctionnement
+   > 6.	Relancer le tout avec la commande docker-compose up -d
 
 3. **[M3]** Based on your previous answers, you have detected some issues in the current solution. Now propose a better approach at a high level.
 
-   > 
+   > On pourrait aussi lancer la nouvelle webapp dans un nouveau conteneur (sans passer par le docker-compose.yml existant). Ensuite, on entre dans le conteneur haproxy existant (docker -exec -ti haproxy /bin/bash) pour modifier le haproxy.cfg. On relance ensuite un nouveau process haproxy avec la nouvelle config (haproxy -f /usr/local/etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid). Cette solution a un inconvénient cependant, comme on ne modifie pas le docker-compose, si on relance toute l’architecture, nos modifications précédentes ne seront pas prises en compte.
 
 4. **[M4]** You probably noticed that the list of web application nodes is hardcoded in the load balancer configuration. How can we manage the web app nodes in a more dynamic fashion?
 
-   > 
+   > Idéalement, il faudrait que le haproxy détecte automatiquement quand il y a une nouvelle webapp ajoutée dans le subnet 192.168.42.0/24 et qu’il mette à jour sa configuration pour ajouter la nouvelle webapp en tant que node membre du load balancing. 
+   > Les webapp pourraient utiliser un mécanisme de ping au load balancing pour indiquer leur présence. Une nouvelle webapp effectuera donc pour la première fois son « ping », et comme le load balancer ne le connait pas, il pourra l’ajouter à sa configuration.
+
 
 5. **[M5]** In the physical or virtual machines of a typical infrastructure we tend to have not only one main process (like the web server or the load balancer) running, but a few additional processes on the side to perform management tasks.
 
@@ -35,13 +80,13 @@ Ce laboratoire a pour objectifs :
 
    Do you think our current solution is able to run additional management processes beside the main web server / load balancer process in a container? If no, what is missing / required to reach the goal? If yes, how to proceed to run for example a log forwarding process?
 
-   > 
+   > Dans les conteneurs, il faudrait ajouter un programme qui permet de push les logs. Cela peut se faire en modifiant les Dockerfile et en ajoutant un paquet qui permettant cela. Il faudra également modifier le script run.sh exécuté par défaut pour démarrer le service correspondant au démarrage du conteneur.
 
 6. **[M6]** In our current solution, although the load balancer configuration is changing dynamically, it doesn't follow dynamically the configuration of our distributed system when web servers are added or removed. If we take a closer look at the `run.sh` script, we see two calls to `sed` which will replace two lines in the `haproxy.cfg` configuration file just before we start `haproxy`. You clearly see that the configuration file has two lines and the script will replace these two lines.
 
    What happens if we add more web server nodes? Do you think it is really dynamic? It's far away from being a dynamic configuration. Can you propose a solution to solve this?
 
-   > 
+   > Si l’on veut ajouter des nœuds, il faudra modifier le script run.sh et la config haproxy.cfg avant de relancer le load balancer. Ce n’est pas dynamique car cela requiert de modifier manuellement des fichiers et de relancer le container. On pourrait imaginer une solution telle que décrite dans la question M4.
 
 **Deliverables**:
 
@@ -115,10 +160,35 @@ Ce laboratoire a pour objectifs :
 
 ### Task 6: Make the load balancer automatically reload the new configuration
 
+1. Take a screenshots of the HAProxy stat page showing more than 2 web applications running
 
+   ![task6_1](./img/task6_1.png)
+
+   On constate dans la liste des nodes 3 webapp.
+
+   En inspectant le fichier haproxy.cfg, on voit bien notre configuration dynamique pour les 3 webapp :
+   ```
+   # HANDLEBARS START
+    
+   server 3d0bf8c4017b 192.168.42.11:3000 check
+   
+   server 77f4e2632823 192.168.42.33:3000 check
+   
+   server f56bf7c74c40 192.168.42.22:3000 check
+   
+   # HANDLEBARS STOP
+   ```
+
+   Le résultat de la commande `docker ps` se trouve dans le dossier `logs/task 6`
+
+2. Give your own feelings about the final solution. Propose improvements or ways to do the things differently
+
+   > todo
 
 ### Difficulties
 
 Il faut faire attention au build des images docker de leur donner toujours les mêmes noms.
 
 ### Conclusion
+
+todo
