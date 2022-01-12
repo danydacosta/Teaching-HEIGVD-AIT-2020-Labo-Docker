@@ -205,13 +205,15 @@ Lorsque l’on ajoute une nouvelle webapp, il faut modifier le fichier docker-co
 
 2. Give your own feelings about the final solution. Propose improvements or ways to do the things differently
 
-   > todo
+   > Le sentiment global est que cela requiert quand même beaucoup d'éléments et de configuration pour que le tout fonctionne correctement. On est dépendant de beaucoup de solutions différentes (S6, Serf, handlebars, etc), et on doit parfois faire du "bricolage" (simulation de la gestion du SIGTERM dans le script pour l'envoyer à Serf). La question qui nous vient à l'esprit est : est-ce qu'une telle solution pourrait fonctionner à long terme (au fil des màj des produits) et à large échelle.
+
+   > HAProxy fournis une API. Malheureusement, cette API ne permet pas de faire des add/remove de nodes dans la config directement, mais on peut cependant ajouter les nodes initialement avec l'attribut disabled. On peut, au traver de l'API, modifier la configuration des noeuds déjà présents (modification du status, de l'IP, du port, etc). On pourrait imaginer en ajouter un grand nombre initialement (une centaine), et les activer (enable) au fur et à mesure quand on veut ajouter un nouveau node. Cette solution permetterait de remplacer handlebars qui s'occupe de générer un nouveau fichier de configuration haproxy.cfg. Source : https://www.haproxy.com/blog/dynamic-configuration-haproxy-runtime-api/
 
 ### Difficulties
 
-Nous n'avons pas rencontré de grandes difficultés durant ce laboratoire, en effet nous avions déjà traité Docker dans le cours RES. Les seules petites difficultés ou problèmes rencontrés, et que les machines Docker ne fonctionnent pas bien sur Windows. Et qu'il faut faire attention au build des images docker à leur donner toujours les mêmes noms.
+Nous n'avons pas rencontré de grandes difficultés durant ce laboratoire, en effet nous avions déjà traité Docker dans le cours RES. Les seules petites difficultés ou problèmes rencontrés, et que les machines Docker ne fonctionnent pas bien sur Windows. Et qu'il faut faire attention au build des images docker à leur donner toujours les mêmes noms. Il faut également être rigoureux dans les étapes, prendre le temps de bien les lire en amont avant de faire la manipulation pour ne pas manquer des logs ou autre.
 
 ### Conclusion
 
-En conclusion, ce laboratoire était très instructif. Il permet de mettre en pratique les différentes notions vues en cours. Nous avons aussi pu mettre en pratique quelques outils et notions que nous ne connaissions pas encore. Le laboratoire est bien expliqué et si on suit gentiment toutes les instructions dans l'ordre alors on arrive à un résultat satisfaisant. 
+En conclusion, ce laboratoire était très instructif. Il permet de mettre en pratique les différentes notions vues en cours. Nous avons aussi pu mettre en pratique quelques outils et notions que nous ne connaissions pas encore. Le laboratoire est bien expliqué et si on suit gentiment toutes les instructions dans l'ordre alors on arrive à un résultat satisfaisant. Cela nous donne un bon aperçu de comment un service web peut être géré à large échelle pour supporter un grand nombre de clients.
 
