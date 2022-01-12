@@ -1,6 +1,28 @@
 ## Lab 04 - Docker
 
-[toc]
+> Auteurs : Delphine Scherler, Dany Oliveira da Costa, Stefan Simeunovic
+>
+> Date : 12 janvier 2021
+
+[Introduction](https://github.com/danydacosta/Teaching-HEIGVD-AIT-2020-Labo-Docker/blob/master/report/rapport.md#introduction)
+
+[Task 0: Identify issues and install the tools](https://github.com/danydacosta/Teaching-HEIGVD-AIT-2020-Labo-Docker/blob/master/report/rapport.md#task-0-identify-issues-and-install-the-tools)
+
+[Task 1: Add a process supervisor to run several processes](https://github.com/danydacosta/Teaching-HEIGVD-AIT-2020-Labo-Docker/blob/master/report/rapport.md#task-1-add-a-process-supervisor-to-run-several-processes)
+
+[Task 2: Add a tool to manage membership in the web server cluster](https://github.com/danydacosta/Teaching-HEIGVD-AIT-2020-Labo-Docker/blob/master/report/rapport.md#task-2-add-a-tool-to-manage-membership-in-the-web-server-cluster)
+
+[Task 3: React to membership changes](https://github.com/danydacosta/Teaching-HEIGVD-AIT-2020-Labo-Docker/blob/master/report/rapport.md#task-3-react-to-membership-changes)
+
+[Task 4: Use a template engine to easily generate configuration files](https://github.com/danydacosta/Teaching-HEIGVD-AIT-2020-Labo-Docker/blob/master/report/rapport.md#task-4-use-a-template-engine-to-easily-generate-configuration-files)
+
+[Task 5: Generate a new load balancer configuration when membership changes](https://github.com/danydacosta/Teaching-HEIGVD-AIT-2020-Labo-Docker/blob/master/report/rapport.md#task-5-generate-a-new-load-balancer-configuration-when-membership-changes)
+
+[Task 6: Make the load balancer automatically reload the new configuration](https://github.com/danydacosta/Teaching-HEIGVD-AIT-2020-Labo-Docker/blob/master/report/rapport.md#task-6-make-the-load-balancer-automatically-reload-the-new-configuration)
+
+[Difficulties](https://github.com/danydacosta/Teaching-HEIGVD-AIT-2020-Labo-Docker/blob/master/report/rapport.md#difficulties)
+
+[Conclusion](https://github.com/danydacosta/Teaching-HEIGVD-AIT-2020-Labo-Docker/blob/master/report/rapport.md#conclusion)
 
 ### Introduction
 
@@ -187,8 +209,9 @@ Lorsque l’on ajoute une nouvelle webapp, il faut modifier le fichier docker-co
 
 ### Difficulties
 
-Il faut faire attention au build des images docker de leur donner toujours les mêmes noms.
+Nous n'avons pas rencontré de grandes difficultés durant ce laboratoire, en effet nous avions déjà traité Docker dans le cours RES. Les seules petites difficultés ou problèmes rencontrés, et que les machines Docker ne fonctionnent pas bien sur Windows. Et qu'il faut faire attention au build des images docker à leur donner toujours les mêmes noms.
 
 ### Conclusion
 
-todo
+En conclusion, ce laboratoire était très instructif. Il permet de mettre en pratique les différentes notions vues en cours. Nous avons aussi pu mettre en pratique quelques outils et notions que nous ne connaissions pas encore. Le laboratoire est bien expliqué et si on suit gentiment toutes les instructions dans l'ordre alors on arrive à un résultat satisfaisant. 
+
